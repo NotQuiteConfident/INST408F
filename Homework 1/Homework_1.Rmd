@@ -1,0 +1,101 @@
+---
+title: "Coronavirus Eploritory Data Analysis"
+author: "Hayden Smedley"
+date: "03/12/20"
+output: html_document
+---
+
+# COVID-19 Introduction
+
+COVID-19 or Coronavirus Disease of 2019 is a disease casued by SARS-CoV-2 virus and is root of the ongoing global pandemic. At the moment, over 150,000 people have been infected, including over 2,000 in the United States, and over 5,800 people have died (World Health Organization [WHO], n.d.).
+
+### Symptoms
+
+The most common symptoms are a fever, tiredness, and a dry cough. Other possible symptoms include aches and pains, nasal congestion, runny nose, sore throat or diarrhea. Around one in six may develop difficulty breathing and require special treatment (World Health Organization [WHO], n.d.). 
+
+### Spread and Avoidance
+
+The virus spreads from person to person through droplets from the nose or mouth. These droplets can land on surfaces and be touched by another person who then touches their face. The droplets can also be breathed in by another person. The best ways to avoid being infected include regularly washing your hands with soap, keeping your distance from others when possible, and avoid touching your mouth, nose, or eyes. Additionally, staying home and self-isolate when you are sick can help stop others from becoming sick (World Health Organization [WHO], n.d.).
+
+## Data input and cleaning
+
+In order to do anything with the data it first needs to be imported. This was done with the readxl package and the files coronavirus.xlsx and comorbidity.xlsx were imported successfully. These two files were then combined with an inner join on the ID variable. This created one file from any shared data. Lastly the data was recoded to change any age value that was greater than or equal to 120 to NA and any values of Mainland China in the country variable was changed to simply China to avoid splitting China's data.
+
+```{r}
+# Import readxl package
+library("readxl")
+
+# Import dplyr package
+library(dplyr)
+
+# Set working directory
+setwd("C:/Users/hayde/Documents/INST408F")
+
+# Read in excel files with data
+cv <- read_excel("Homework 1/coronavirus.xlsx")
+cm <- read_excel("Homework 1/comorbidity.xlsx")
+
+# Join data where IDs exist in both files
+combined_cv <- inner_join(cv, cm, by="ID")
+
+# Recode any age greater than or equal to 120 to NA
+combined_cv$Age[combined_cv$Age >= 120] <- NA
+
+# Recode Mainland China to China
+combined_cv$Country[combined_cv$Country == "Mainland China"] <- "China"
+
+# Summary of Coronavirus data
+summary(combined_cv)
+
+```
+
+## Exploratory Data Analysis
+
+The ddataset consisted of 1764 obervations with 12 variables for each observation. Of the observations in the dataset, 49.9% of them were female. The median age of patients with coronavirus was 28 years old while the mean age of those who died from coronavirus was 28.4 years old. The standard deviation of the age of patients who died from coronavirus was 15.9 years. 51.3% of patients in the data set were in China, 10.1% were in the United States and 4.5% in Australia. Of patients who died from coronavirus 71.3% had no comorbidities while 15.3% had Lupus, 7.5% had HIV, 3.9% had Heart Disease and 1.9% had Liver Disease.
+
+```{r}
+
+# Get the number of observations
+length(combined_cv$ID)
+
+# Get the number of variables
+length(combined_cv)
+
+# Get proportion of patients by sex
+prop.table(table(combined_cv$Sex))*100
+
+# Get median age of patients who have coronavirus
+median(filter(combined_cv, CoronaVirus == 1)$Age, na.rm = TRUE)
+
+# Get mean age of patients who died from coronavirus
+mean(filter(combined_cv, CoronaVirus == 1 & Death == 1)$Age, na.rm = TRUE)
+
+# Get standard deviation of age of patients who died from coronavirus
+sd(filter(combined_cv, CoronaVirus == 1 & Death == 1)$Age, na.rm = TRUE)
+
+# Get proportion of cases of coronavirus by country
+sort(prop.table(table(filter(combined_cv, CoronaVirus == 1)$Country))*100, decreasing = TRUE)
+
+# Get proportion of comorbidities associated with coronavirus patients
+sort(prop.table(table(filter(combined_cv, CoronaVirus == 1)$Comorbidity))*100, decreasing = TRUE)
+
+```
+
+## Data Visualization
+
+The boxplot below represents Patient Age by Coronavirus Positivity. The left box plot shows the distribution of the ages of patients who do not have coronavirus while the right box plot shows the same for the patients who do have coronavirus. The distribution is fairly similar in both groups, with patients without coronavirus having a slightly tighter central distribution and higher median.
+
+```{r}
+
+# Create boxplot of age by coronavirus
+boxplot(Age~CoronaVirus,data=combined_cv, main="Patient Age by Coronavirus", ylab="Age of Patients", xlab="Coronavirus Positivity")
+
+```
+
+# Biblography
+
+<ul>
+<li>Q&A on coronaviruses (COVID-19). (n.d.). Retrieved March 12, 2020, from https://www.who.int/news-room/q-a-detail/q-a-coronaviruses</li>
+<li>Coronavirus disease 2019. (n.d.). Retrieved March 12, 2020, from https://www.who.int/emergencies/diseases/novel-coronavirus-2019</li>
+</ul>
+

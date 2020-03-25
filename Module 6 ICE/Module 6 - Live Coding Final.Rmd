@@ -1,0 +1,74 @@
+---
+title: "Module 6: Live Coding"
+subtitle: "3/3/2020"
+output: html_document
+---
+
+# Exploratory Data Analysis in R
+For this exercise, we will use a fake coronavirus patient dataset.
+```{r}
+# change wd
+setwd("C:/Users/hayde/Documents/INST408")
+
+# import file
+cv <- read.csv("Module 6 ICE/coronavirus.csv")
+```
+
+
+
+
+
+## First, let's see what variables are available in the dataset
+```{r}
+str(cv)
+```
+
+## Running individual summary functions
+Let's explore the Age variable.
+
+```{r}
+min(cv$Age)
+
+mean(cv$Age)
+
+median(cv$Age)
+
+max(cv$Age)
+
+quantile(cv$Age)
+```
+
+## Shortcut: the summary() function
+
+```{r}
+summary(cv$Age)
+```
+
+## Tabulate counts with table()
+```{r}
+# Race
+table(cv$Race)
+
+# Subset (limit to China)
+table(cv$Death[cv$Country=='China'])
+
+# Race by Coronavirus
+table(cv$Race, cv$CoronaVirus)
+
+# Add Labels
+table('Race/Ethnicity' = cv$Race, 
+      'Has Coronavirus (yes/no)' = cv$CoronaVirus)
+
+
+```
+
+## Percentages with prop.table
+```{r}
+# proportion across all patients
+prop.table(table(cv$Race))*100
+
+# proportion across patients older than 25
+prop.table(table(cv$Race[cv$Age>25]))*100
+
+```
+

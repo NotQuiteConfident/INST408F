@@ -1,0 +1,179 @@
+---
+title: <center>Final Project</center>
+author: <center>Hayden Smedley</center>
+subtitle: <center>Predicting Food Deserts in Georgia</center>
+output: html_document
+---
+
+
+### Set Up Libraries
+In this step, I install the packages needed to carry out my analysis.
+
+```{r results='hide', message=FALSE, warning=FALSE}
+library(caret)
+library(fastAdaboost)
+library(gbm)
+library(rpart)
+library(pROC)
+library(caretEnsemble)
+# Visualization packages
+library(ggplot2)
+library(dplyr)
+```
+
+### Data Cleaning
+In this step, the **Georgia** Food Research Atlas data are read in. The *2015 USDA Food Access Research Atlas* database was used to identify food deserts at the census tract level. This database contains flags for food deserts based on income level, distances of half a mile and one mile to the nearest supermarket for urban areas, or ten and twenty miles to the nearest supermarket for rural areas, as well as vehicle availability. The outcome of interest was low income and low access tract measured at 1/2 mile for urban areas and 10 miles for rural areas. The American Community Survey (ACS) was used to pull the demographic, economic, education, and housing characteristics for each census tract. The following features were pulled from the ACS data, and included in each model: proportion, at the census tract level of age groups, rent vs own, live alone by sex, race, and education levels.
+```{r results = "hide"}
+# import data
+food_atlas <-read.csv("Final_Data.csv")
+
+# Select variables of interest
+fd <- food_atlas[c("POP2010",
+                                   "race_perc_white",
+                                   "race_perc_AA",
+                                   "race_perc_AI_AN",
+                                   "race_perc_Asian",
+                                   "race_perc_NH_PI",
+                                   "race_perc_Other",
+                                   "race_perc_hisp",
+                                   "edu_perc_hsbelow",
+                                   "edu_perc_hsplus",
+                                   
+                                   "novehicle_perc",
+                                   "age_perc_lt5",
+                                   "age_perc_5to9",
+                                   "age_perc_10to14",
+                                   "age_perc_15to19",
+                                   "age_perc_20to24",
+                                   "age_perc_25to34",
+                                   "age_perc_35to44",
+                                   "age_perc_45to54",
+                                   "age_perc_55to59",
+                                   "age_perc_60to64",
+                                   "age_perc_65to74",
+                                   "age_perc_75to84",
+                                   "age_perc_85plus",
+                                   "sex_perc_male",
+                                   "sex_perc_female",
+                                   "SNAP_perc",
+                                   "house_perc_own",
+                                   "house_perc_rent",
+                                   "live_perc_female_alone",
+                                   "live_perc_male_alone",
+                                   "LILATracts_halfAnd10")]
+
+# create new food desert variable
+fd$food_desert <-ifelse(fd$LILATracts_halfAnd10 == 0, "No","Yes")
+
+# convert to factor
+fd$food_desert <-as.factor(fd$food_desert)
+
+# Check variable
+
+table(fd$food_desert,fd$LILATracts_halfAnd10)
+
+# Check type
+str(fd$food_desert)
+
+# drop original variable
+fd$LILATracts_halfAnd10 <- NULL
+
+
+```
+
+### Training and Testing Data Split
+The data were divided into an **80/20** training and testing data split. There were five different classification models built to predict the USDA defined food desert status of a census tract, each with the same sets of predictors. The binary classification models were: 
+
+* AdaBoost
+* Gradient Boosting
+* CART
+* Logistic Regression
+
+Additionally, ensemble methods were applied to combine the predictions of all of the aforementioned binary classification models and evaluate the performance of this model. *For the purposes of this report, only the logistic regression results are displayed.*
+```{r}
+# remove obs with missing values
+fd <- na.omit(fd)
+
+# create test/train split
+inTrain <- createDataPartition(fd$food_desert, 
+                               p = .8, 
+                               list = FALSE, 
+                               times = 1)
+
+# split
+fd_train <- fd[inTrain,]
+fd_test <- fd[-inTrain,]
+```
+
+### Analysis
+### Logistic regression
+The logistic regression model was built with no tuning parameters needed, but using a 5-fold CV  control object. This model was evaluated for model performance by applying the trained model to the test dataset in order to predict food desert status in the test set. Model performance was evaluated by predicting class membership (food desert vs non-food desert) and predicted probabilities. The predicted probabilities were then used to calculate the ROC for this model. 
+
+```{r warning = F}
+# parameters
+evalStats <- function(...) c(twoClassSummary(...),
+                             defaultSummary(...),
+                             mnLogLoss(...))
+# control object
+ctrl  <- trainControl(method = "cv",
+                      number = 5,
+                      summaryFunction = evalStats,
+                      classProbs = TRUE)
+# model
+logit <- train(food_desert ~ .,
+             data = fd_train,
+             method = "glm",
+             trControl = ctrl)
+
+# We may want to take a glimpse at the regression results.
+summary(logit)
+```
+
+### Data visualization
+Data visualizations showing a comparison of three of the top important variables in the model were created in order to compare the means of those variables in food deserts versus non-food deserts. The variable importance plots ranked the following variables at the highest importance in the GBM model [Figure 5]: 
+
+* percentage of the population that owned their home
+* percentage of the population that were on SNAP benefits
+* percentage of the population that rented their home
+* percentage of whites 
+
+A comparison of these variables by food desert status seems to confirm much of what has been found in survey-based studies in the past. According to Figure 2, the percentage of whites, on average, is much higher in non-food deserts compared to food deserts, which supports the claims in the literature that found that ethnic minorities typically reside in food deserts more often than their white counterparts. Figure 3 shows the percentage of residents that own their home is much lower, on average, in food deserts compared to non-food deserts. According to Figure 4, the percentage of residents on SNAP benefits is, on average, much higher in food deserts compared to non-food deserts.	
+```{r}
+# Create a group-means data set
+
+# % white
+perc_white <- fd %>% 
+        group_by(food_desert) %>% 
+        summarise(
+          race_perc_white = mean(race_perc_white)
+        )
+
+# house_perc_own
+house_perc_own <- fd %>% 
+        group_by(food_desert) %>% 
+        summarise(
+          house_perc_own = mean(house_perc_own)
+        )
+
+# SNAP_perc
+SNAP_perc <- fd %>% 
+        group_by(food_desert) %>% 
+        summarise(
+          SNAP_perc = mean(SNAP_perc)
+        )
+
+# Plot
+ggplot(perc_white, aes(x = food_desert, y = race_perc_white)) +
+  geom_bar(stat = "identity",fill="dark green") + labs(title = "Figure 2. Average Percentage of Whites, by Food Desert Status", x = "Food Desert", y = "Percent White")
+
+ggplot(house_perc_own, aes(x = food_desert, y = house_perc_own)) +
+  geom_bar(stat = "identity",fill="blue") + labs(title = "Figure 3. Average Percentage of Population that Owns Home, by Food Desert Status", x = "Food Desert", y = "Owns Home (%)")
+
+ggplot(SNAP_perc, aes(x = food_desert, y = SNAP_perc)) +
+  geom_bar(stat = "identity",fill="red") + labs(title = "Figure 4. Average Percentage of Population on SNAP Benefits, by Food Desert Status", x = "Food Desert", y = "On SNAP Benefits (%)")
+
+
+```
+
+### Conclusion
+The issue of food security is becoming increasingly important to public health practitioners and researchers because of the adverse health outcomes and underlying racial disparities that are associated with insufficient access to healthy foods. Prior research has used various data sources in order to qualitatively identify regions classified as food deserts, but since there are certain characteristics that are shared across these regions, a predictive model is a useful method for accurately and efficiently identifying geographic regions where residents lack sufficient access to healthy foods. Overall, the resulting models performed relatively well at predicting food desert status in the United States. The people who would benefit the most from this research include public health practitioners, researchers, urban planners, community activists, government agencies, and most importantly, the individuals who lack access to quality and affordable healthy food options. Future efforts may involve the incorporation of transportation features and twitter data that extracts tweet sentiment and nutritional value of food words as features in the model.
