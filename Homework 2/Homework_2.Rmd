@@ -1,0 +1,63 @@
+---
+title: "Hytpothesis Testing - Overall Physical Health"
+author: "Hayden Smedley"
+subtitle: "4/20/2020"
+output: html_document
+---
+
+## Introduction
+The Behavioral Risk Factor Surveillance System (BRFSS) is the nation's premier system of health-related telephone surveys that collect state data about U.S. residents regarding their health-related risk behaviors, chronic health conditions, and use of preventive services. 
+
+This report seeks to identify target populations for physical health interventions. In order to identify these target populations, we would like to perform statistical testing in order to determine whether or not the interventions should differ across different demographics. One demographic variable we are interested in looking into is sex. 
+
+The BRFSS includes a section on the Health-Related Quality of Life. In order to measure the "Number of Days Physical Health Not Good", respondents were asked: *Now thinking about your physical health, which includes physical illness and injury, for how many days during the past 30 days was your physical health not good?* This question will be used as a proxy to measure overall physical health for survey respondents, where the higher the number of days indicated, the lower overall physical health. The following analysis seeks to determine whether the **Number of Days Physical Health Not Good is greater in males, compared to females.**
+
+## Data Cleaning/Preparation
+The first thing that I did was load the dplyr and ggplot2 packages and read in the BRFSS csv. After that I recoded the PHYSHLTH variable so that all values above 30 would be NA so that they would not affect the results of data analysis. Next I recoded the SEX variable from 1 and 2 to Male and Female respectively in a new variable called SEX2. Lastly I found the mean of PHYSHLTH, which is 15.05 and the number of Males and Females in the data of which there are 996 and 2264 respectively.
+
+```{r warning=FALSE, message=FALSE, results="hide", include=FALSE}
+library(dplyr)
+library(ggplot2)
+
+brfss <- read.csv("BRFSS-1.csv")
+
+brfss$PHYSHLTH[brfss$PHYSHLTH > 30] <- NA
+brfss$SEX2 <- recode(brfss$SEX, '1' = "Male", '2' = "Female")
+
+mean(brfss$PHYSHLTH, na.rm = TRUE)
+length(brfss$SEX2[brfss$SEX2 == "Male"])
+length(brfss$SEX2[brfss$SEX2 == "Female"])
+
+```
+
+
+# Data Visualization
+In the visualization below two boxplots are shown. They each show the distribution of the number of ppor physical health days by one sex. Female on the left and Male on the right. These boxplots show that the overall spread is similar between sexes but that Males have a slightly higher median of poor physical health days.
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+
+# create boxplot
+ggplot(data=brfss) +
+    geom_boxplot(mapping = aes(x=SEX2, y=PHYSHLTH,fill=SEX2))+
+       labs(title="Comparison of Number of Days of Poor Physical Health by Sex",x="Sex", y = "Number of Days of Poor Physical Health", fill="Sex")
+
+```
+
+## Hypothesis Test
+**Null Hypothesis** = 
+
+**Alternative Hypothesis** =  
+
+**Alpha** = 
+
+**Type of test (upper, lower, two-sided)** = 
+
+**P-Value** = 
+```{r warning=FALSE, message=FALSE, results="hide", include=FALSE}
+
+
+
+```
+
+## Conclusion
+INSERT NARRATIVE HERE
