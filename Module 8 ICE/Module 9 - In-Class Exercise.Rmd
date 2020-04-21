@@ -1,0 +1,57 @@
+---
+title: "Module 9: In-Class Exercise"
+author: 
+subtitle: 
+output: html_document
+---
+
+## Yet another COVID-19 Example
+With the ever evolving COVID-19 situation, we have all been informed that older adults are more at risk for being infected and showing symptoms, being hospitalized, or dying from the virus. **The following alarming statistics have been reported by the Centers for Disease Control (CDC):**
+
+- 8 out of 10 deaths reported in the U.S. have been in adults 65 years old and older
+- 8 of 10 deaths are in adults 65+
+
+**Among adults with confirmed COVID-19 reported in the U.S.:**
+
+Estimated percent requiring hospitalization
+
+- 31-70% of adults 85 years old and older
+- 31-59% of adults 65-84 years old
+
+Estimated percent requiring admission to intensive care unit
+
+- 6-29% of adults 85 years old and older
+- 11-31% of adults 65-84 years old
+
+Estimated percent who died
+
+- 10-27% of adults 85 years old and older
+- 4-11% of adults 65-84 years old
+
+With these alarming statistics in mind, we revist the coronavirus dataset from previous modules, containing information on a (fake) sample of patients who were quarantined at the National Institutes of Health (NIH) after arriving from affected countries abroad. For this exercise, we would like to determine if our data does in fact show that the average age of patients diagnosed with coronavirus is significantly higher than the average age of patients who were NOT diagnosed with the coronavirus. **Fill in the blanks below, and insert all of your code into the code chunk provided (i.e. import the coronavirus file & run the appropriate hypothesis test). For your conclusion, make sure the wording is very similar to the applied example in the lecture PowerPoint, or you will not get full credit. The significance level for this test is 0.05. Remember, if your p-value has an "e" in it, the p-value is written with scientific notation. See examples here: https://www.chem.tamu.edu/class/fyp/mathrev/mr-scnot.html.**
+
+### Hypothesis Test: Is the average age of coronavirus patients higher than the average age of non-coronavirus patients?
+
+- **Null Hypothesis:** The Null hypothesis is that the average age of cononavirus patients is not significantly higher than the average age of non-coronavirus patients.
+- **Alternative Hypothesis:** The alternate hypothesis is that the average age of coronavirus patients is significantly higher.
+- **Type of test (upper, lower, two tailed):** I will use an upper tailed test.
+- **Alpha:** 0.05
+- **P-Value:** 2.2*10^(-16)
+- **Reject or fail to reject the null hypothesis?:** I do reject the null hypothesis
+- **Why or why not (referring to the previous question)?:** Because the P-value is much less than the alpha
+- **Conclusion:** The average age of coronavirus patients is higher than the average age of non-coronavirus patients
+
+```{r warning=FALSE, message=FALSE}
+# insert code here
+
+data = read.csv("m9cv.csv")
+
+with(data, wilcox.test(x=data$Age[data$CoronaVirus==1], 
+                     y=data$Age[data$CoronaVirus==0],
+                     alternative = "greater"))
+
+```
+
+
+## References
+Centers for Disease Control and Prevention. (2020). Coronavirus Disease 2019 (COVID-19): Older Adults. 30 March 2020. Retrieved from https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/older-adults.html?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fcoronavirus%2F2019-ncov%2Fspecific-groups%2Fhigh-risk-complications%2Folder-adults.html
