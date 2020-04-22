@@ -44,20 +44,23 @@ ggplot(data=brfss) +
 ```
 
 ## Hypothesis Test
-**Null Hypothesis** = 
+**Null Hypothesis** = The Null Hypothesis is that there is not a significant difference in the number of poor physical health days by sex.
 
-**Alternative Hypothesis** =  
+**Alternative Hypothesis** =  The Alternative Hypothesis is that there is a significant difference in the number of poor physical health days by sex.
 
-**Alpha** = 
+**Alpha** = 0.05
 
-**Type of test (upper, lower, two-sided)** = 
+**Type of test (upper, lower, two-sided)** = Upper tailed test
 
-**P-Value** = 
+**P-Value** = 0.1725
+
 ```{r warning=FALSE, message=FALSE, results="hide", include=FALSE}
 
-
+with(brfss, wilcox.test(x=PHYSHLTH[SEX2=="Male"], 
+                     y=PHYSHLTH[SEX2=="Female"],
+                     alternative = "greater"))
 
 ```
 
 ## Conclusion
-INSERT NARRATIVE HERE
+I do not reject the null hypothesis because the p-value of 0.1725 is greater that the alpha of 0.05. As such, based on this data, there is not a significant difference in the number of poor physical health days between sexes.
