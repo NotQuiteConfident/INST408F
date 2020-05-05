@@ -1,0 +1,101 @@
+---
+title: "Linear Regression - Predicting Individual Medical Costs Billed by Health Insurance"
+author: ""
+subtitle: "4/18/2020"
+output: html_document
+---
+
+## Exploratory Data Analysis
+
+In the insurance CSV file there were 7 variables and 1338 observations. Of these variables three were categorical and four were continuous. The categorical variables were sex with its highest category being male at 50.5%, smoker with its highest category being no at 79.5%, and region with its highest category being southeast at 27.2%. The continuous variables were age with a mean of 39.2 and a standard deviation of 14.0, bmi with a mean of 30.7 and a standard deviation of 6.1, children with a mean of 1.1 and a standard deviation of 1.2, and charges with a mean of 13270.4 and a standard deviation of 12110.0.
+
+```{r warning=FALSE, message=FALSE, results="hide", include=FALSE}
+
+# Import data and packages
+library(ggplot2)
+insurance <- read.csv("insurance.csv")
+
+# Number of variables and observations
+nrow(insurance)
+length(insurance)
+
+# Categorical variables
+prop.table(table(insurance$sex))*100
+prop.table(table(insurance$smoker))*100
+prop.table(table(insurance$region))*100
+
+# Continous variables
+mean(insurance$age)
+sd(insurance$age)
+mean(insurance$bmi)
+sd(insurance$bmi)
+mean(insurance$children)
+sd(insurance$children)
+mean(insurance$charges)
+sd(insurance$charges)
+
+```
+
+
+## Data Visualization
+
+Figure 1 shows that the median medical costs are similar between male and female but male cost have a wider spread. Figure 2 shows that smokers have much higher median medical costs and a larger spread of medical costs. Figure 3 shows slightly different median medical costs between regions, with the northeast's being the highest and the southwest being the lowest. However the southeast has the largest spread and the southwest the lowest. Figure 4 shows that medical cost generally increase with age. Figure 5 shows a trend of increasing medical costs with increasing BMI. Figure 6 shows an increase in medical costs with increases in the number of children a person has covered by Health Insurance.
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+
+# create boxplot for sex
+ggplot(data=insurance) +
+    geom_boxplot(mapping = aes(x=sex, y=charges,fill=sex))+
+       labs(title="Figure 1: Comparison of Medical Costs by Sex",x="Sex", y = "Medical Costs", fill="Sex")
+
+# create boxplot for smoking
+ggplot(data=insurance) +
+    geom_boxplot(mapping = aes(x=smoker, y=charges,fill=smoker))+
+       labs(title="Figure 2: Comparison of Medical Costs by Smoking Status",x="Smoking Status", y = "Medical Costs", fill="Smoking Status")
+
+# create boxplot for region
+ggplot(data=insurance) +
+    geom_boxplot(mapping = aes(x=region, y=charges,fill=region))+
+       labs(title="Figure 3: Comparison of Medical Costs by Region",x="Region", y = "Medical Costs", fill="Region")
+
+# create scatterplot for age
+ggplot(data=insurance,aes(x=age, y=charges))+
+    labs(title="Figure 4: Comparison of Medical Costs by Age",x="Age", y = "Medical Costs")+
+      geom_point(shape=1)
+
+# create scatterplot for bmi
+ggplot(data=insurance,aes(x=bmi, y=charges))+
+    labs(title="Figure 5: Comparison of Medical Costs by BMI",x="BMI", y = "Medical Costs")+
+      geom_point(shape=1)
+
+# create scatterplot for children
+ggplot(data=insurance,aes(x=children, y=charges))+
+    labs(title="Figure 6: Comparison of Medical Costs by Children covered by Health Insurance",x="Number of Children", y = "Medical Costs")+
+      geom_point(shape=1)
+```
+
+## Multiple Linear Regression Results
+
+* Sex: The slope of -131.3 represents that the average medical costs are $131.3 lower for males than females
+* Smoker: The slope of 23848.5 represents that the average medical costs are $23,848.5 higher for smokers than non-smokers
+* Region: The slope of -353.0 represents that medical costs for those in the northwest are on average $353 lower than those in the northeast. The slope of -1035.0 represents that medical costs for those in the southeast are on average \$1,035 lower than those in the northeast. The slope of -960.0 represents that medical costs for those in the southwest are on average \$960 lower than those in the northeast.
+* Age: The slope of 256.9 represents that for every additional year of age medical costs go up by an average of $256.9
+* BMI: The slope of 339.2 represents that for every additional unit of BMI medical costs go up by an average of $339.2
+* Children: The slope of 475.5 represents that for every additional child covered by health insurance medical costs go up by an average of $475.5
+
+```{r warning=FALSE, message=FALSE, results="hide", include=FALSE}
+# linear regression code
+lin_reg <- lm(data = insurance, charges ~ sex + smoker + region + age + bmi + children)
+summary(lin_reg)
+
+```
+
+## Linear Regression Assumptions
+
+Based on the plots below, homoscedasicity is violated. The variance of the residuals does not stay roughly the same throughout the model. There is wide variance in the residuals thoughout and as a result it fails the hemoscedasicity assumption.
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+# regression assumption plots code
+plot(lin_reg)
+```
+
