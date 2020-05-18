@@ -87,10 +87,16 @@ hist(diabetes$age,
 ```
 
 ## Logistic Regression Results
-INSERT NARRATIVE HERE
-```{r warning=FALSE, message=FALSE, results="hide"}
-# insert logistic regression code
+* Age: A one year increase in age causes the log odds of having diabetes to increase by 0.055454, holding the other independent variables constant
+* Gender: The log odds of having diabetes between someone who is Male and someone who is female is 0.244852, holding the other independent variables constant
+* BMI: A one unit increase in BMI causes the log odds of having diabetes to increase by 0.073879, holding the other independent variables constant
 
+```{r warning=FALSE, message=FALSE, results="hide"}
+
+
+# Multiple Linear Regression
+MLR <- glm(data = diabetes, dm ~ age + gender + bmi, family = "binomial")
+summary(MLR)
 
 ```
 

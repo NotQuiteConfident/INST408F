@@ -443,8 +443,14 @@ hist(diabetes$age,
 </div>
 <div id="logistic-regression-results" class="section level2">
 <h2>Logistic Regression Results</h2>
-<p>INSERT NARRATIVE HERE</p>
-<pre class="r"><code># insert logistic regression code</code></pre>
+<ul>
+<li>Age: A one year increase in age causes the log odds of having diabetes to increase by 0.055454, holding the other independent variables constant</li>
+<li>Gender: The log odds of having diabetes between someone who is Male and someone who is female is 0.244852, holding the other independent variables constant</li>
+<li>BMI: A one unit increase in BMI causes the log odds of having diabetes to increase by 0.073879, holding the other independent variables constant</li>
+</ul>
+<pre class="r"><code># Multiple Linear Regression
+MLR &lt;- glm(data = diabetes, dm ~ age + gender + bmi, family = &quot;binomial&quot;)
+summary(MLR)</code></pre>
 </div>
 
 
