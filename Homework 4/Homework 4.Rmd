@@ -5,7 +5,8 @@ subtitle: "4/26/2020"
 output: html_document
 ---
 ## Data Cleaning/Preparation
-INSERT NARRATIVE HERE
+The first thing that I did was read in the diabetes csv. After that I created the height.si variable by multiplying the height variable by 0.0254 and the weight.si variable by multiplying the weight variable by 0.453592. Next I created the bmi_categorised variable by calculating the bmi for each person and then using that to sort them into the categories of underweight, normal, overweight, and obese with the rest as NA. Lastly I recoded the insurance and smoking variables to reflect their value labels.
+
 ```{r warning=FALSE, message=FALSE, results="hide"}
 # insert import & data cleaning code here
 setwd("C:/Users/hayde/Documents/GitHub/INST408F")
@@ -18,6 +19,21 @@ diabetes$height.si <- diabetes$height*0.0254
 diabetes$weight.si <- diabetes$weight*0.453592
 
 # Create bmi_categorised
+bmi <- diabetes$weight.si/diabetes$height.si^2
+diabetes$bmi_categorised <- cut(bmi, 
+                                breaks = c(0, 18.5, 25, 30, 100),
+                                labels = c("underweight", "normal", "overweight", "obese"),
+                                right = FALSE)
+
+# Recode insurance variable
+diabetes$insurance[diabetes$insurance == 0] <- "none"
+diabetes$insurance[diabetes$insurance == 1] <- "government"
+diabetes$insurance[diabetes$insurance == 2] <- "private"
+
+# Recode smoking variable
+diabetes$smoking[diabetes$smoking == 1] <- "current"
+diabetes$smoking[diabetes$smoking == 2] <- "never"
+diabetes$smoking[diabetes$smoking == 3] <- "ex-smoker"
 
 ```
 
