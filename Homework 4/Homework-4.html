@@ -371,7 +371,7 @@ summary {
 <div id="data-cleaningpreparation" class="section level2">
 <h2>Data Cleaning/Preparation</h2>
 <p>The first thing that I did was read in the diabetes csv. After that I created the height.si variable by multiplying the height variable by 0.0254 and the weight.si variable by multiplying the weight variable by 0.453592. Next I created the bmi_categorised variable by calculating the bmi for each person and then using that to sort them into the categories of underweight, normal, overweight, and obese with the rest as NA. Lastly I recoded the insurance and smoking variables to reflect their value labels.</p>
-<pre class="r"><code># insert import &amp; data cleaning code here
+<pre class="r"><code># Import data
 setwd(&quot;C:/Users/hayde/Documents/GitHub/INST408F&quot;)
 diabetes &lt;- read.csv(&quot;Homework 4/diabetes.csv&quot;)
 
@@ -382,8 +382,8 @@ diabetes$height.si &lt;- diabetes$height*0.0254
 diabetes$weight.si &lt;- diabetes$weight*0.453592
 
 # Create bmi_categorised
-bmi &lt;- diabetes$weight.si/diabetes$height.si^2
-diabetes$bmi_categorised &lt;- cut(bmi, 
+diabetes$bmi &lt;- diabetes$weight.si/diabetes$height.si^2
+diabetes$bmi_categorised &lt;- cut(diabetes$bmi, 
                                 breaks = c(0, 18.5, 25, 30, 100),
                                 labels = c(&quot;underweight&quot;, &quot;normal&quot;, &quot;overweight&quot;, &quot;obese&quot;),
                                 right = FALSE)
@@ -400,8 +400,25 @@ diabetes$smoking[diabetes$smoking == 3] &lt;- &quot;ex-smoker&quot;</code></pre>
 </div>
 <div id="exploratory-data-analysis" class="section level2">
 <h2>Exploratory Data Analysis</h2>
-<p>INSERT NARRATIVE HERE</p>
-<pre class="r"><code># insert exploratory data analysis code here</code></pre>
+<p>In the dataset there are 403 observations. Of those in the dataset 2.27% were underweight, 28.46% were of normal weight, 30.98% were overweight and 38.29% were obese by BMI. Additionally, 58.06% were Female and 41.94% were Male. 84.62% of those in the dataset did not have diabetes while 15.38% did. Lastly, the average age was 46.85 years old and the average BMI was 28.79.</p>
+<pre class="r"><code># Number of observations
+nrow(diabetes)
+
+# Precentages of BMI categories
+prop.table(table(diabetes$bmi_categorised))*100
+
+# Precentages of gender categories
+prop.table(table(diabetes$gender))*100
+
+
+# Precentages of diabetes categories
+prop.table(table(diabetes$dm))*100
+
+# Average age
+mean(diabetes$age)
+
+# Average BMI
+mean(diabetes$bmi, na.rm = TRUE)</code></pre>
 </div>
 <div id="data-visualization" class="section level2">
 <h2>Data Visualization</h2>

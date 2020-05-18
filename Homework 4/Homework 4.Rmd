@@ -8,7 +8,7 @@ output: html_document
 The first thing that I did was read in the diabetes csv. After that I created the height.si variable by multiplying the height variable by 0.0254 and the weight.si variable by multiplying the weight variable by 0.453592. Next I created the bmi_categorised variable by calculating the bmi for each person and then using that to sort them into the categories of underweight, normal, overweight, and obese with the rest as NA. Lastly I recoded the insurance and smoking variables to reflect their value labels.
 
 ```{r warning=FALSE, message=FALSE, results="hide"}
-# insert import & data cleaning code here
+# Import data
 setwd("C:/Users/hayde/Documents/GitHub/INST408F")
 diabetes <- read.csv("Homework 4/diabetes.csv")
 
@@ -19,8 +19,8 @@ diabetes$height.si <- diabetes$height*0.0254
 diabetes$weight.si <- diabetes$weight*0.453592
 
 # Create bmi_categorised
-bmi <- diabetes$weight.si/diabetes$height.si^2
-diabetes$bmi_categorised <- cut(bmi, 
+diabetes$bmi <- diabetes$weight.si/diabetes$height.si^2
+diabetes$bmi_categorised <- cut(diabetes$bmi, 
                                 breaks = c(0, 18.5, 25, 30, 100),
                                 labels = c("underweight", "normal", "overweight", "obese"),
                                 right = FALSE)
@@ -39,12 +39,26 @@ diabetes$smoking[diabetes$smoking == 3] <- "ex-smoker"
 
 
 ## Exploratory Data Analysis
-INSERT NARRATIVE HERE
+In the dataset there are 403 observations. Of those in the dataset 2.27% were underweight, 28.46% were of normal weight, 30.98% were overweight and 38.29% were obese by BMI. Additionally, 58.06% were Female and 41.94% were Male. 84.62% of those in the dataset did not have diabetes while 15.38% did. Lastly, the average age was 46.85 years old and the average BMI was 28.79.
 ```{r warning=FALSE, message=FALSE, results="hide"}
-# insert exploratory data analysis code here
+# Number of observations
+nrow(diabetes)
+
+# Precentages of BMI categories
+prop.table(table(diabetes$bmi_categorised))*100
+
+# Precentages of gender categories
+prop.table(table(diabetes$gender))*100
 
 
+# Precentages of diabetes categories
+prop.table(table(diabetes$dm))*100
 
+# Average age
+mean(diabetes$age)
+
+# Average BMI
+mean(diabetes$bmi, na.rm = TRUE)
 ```
 
 
