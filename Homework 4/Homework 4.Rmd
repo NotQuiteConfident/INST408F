@@ -40,6 +40,7 @@ diabetes$smoking[diabetes$smoking == 3] <- "ex-smoker"
 
 ## Exploratory Data Analysis
 In the dataset there are 403 observations. Of those in the dataset 2.27% were underweight, 28.46% were of normal weight, 30.98% were overweight and 38.29% were obese by BMI. Additionally, 58.06% were Female and 41.94% were Male. 84.62% of those in the dataset did not have diabetes while 15.38% did. Lastly, the average age was 46.85 years old and the average BMI was 28.79.
+
 ```{r warning=FALSE, message=FALSE, results="hide"}
 # Number of observations
 nrow(diabetes)
@@ -63,11 +64,25 @@ mean(diabetes$bmi, na.rm = TRUE)
 
 
 ## Data Visualization
-INSERT NARRATIVE HERE
+In Figure 1 the bar graph shows that the types of insurance are relatively even in their count but government insurance is the most common, followed by private and then no insurance least common. Figure 2 shows that people who have never smoked are by far the most common in the dataset, followed by current smokers and then ex-smokers. Figure 3 shows that there is a positive relationship between cholesterol and BMI, that is cholesterol tends to increase as BMI does. Lastly, Figure 4 shows the distribution of ages with around 40 being the most common but all ages between 25 and 65 are fairly similar in frequency.
+
 ```{r warning=FALSE, message=FALSE}
-# insert data visualization code here
+# Plot insurance
+barplot(table(diabetes$insurance), 
+        main = "Figure 1: Number of Types of Insurance", xlab = "Type of Insurance", ylab = "Count")
 
+# Plot smoking
+barplot(table(diabetes$smoking), 
+        main = "Figure 2: Smoking Status", xlab = "Smoking Status", ylab = "Count")
 
+# Plot BMI by Cholesterol
+plot(diabetes$bmi, diabetes$chol, 
+     main = "Figure 3: Comparison of Cholesterol by BMI", xlab = "Body Mass Index", ylab = "Cholesterol")
+
+# Histogram of age
+hist(diabetes$age, 
+     breaks = 20,
+     main = "Figure 4: Histogram of Age", xlab = "Age in Years", ylab = "Frequency")
 
 ```
 
