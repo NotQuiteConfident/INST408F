@@ -1,0 +1,51 @@
+---
+title: "Logistic Regression - Predicting Diabetes Diagnosis"
+author: ""
+subtitle: "4/26/2020"
+output: html_document
+---
+## Data Cleaning/Preparation
+INSERT NARRATIVE HERE
+```{r warning=FALSE, message=FALSE, results="hide"}
+# insert import & data cleaning code here
+setwd("C:/Users/hayde/Documents/GitHub/INST408F")
+diabetes <- read.csv("Homework 4/diabetes.csv")
+
+# Create height.si
+diabetes$height.si <- diabetes$height*0.0254
+
+# Create weight.si
+diabetes$weight.si <- diabetes$weight*0.453592
+
+# Create bmi_categorised
+
+```
+
+
+## Exploratory Data Analysis
+INSERT NARRATIVE HERE
+```{r warning=FALSE, message=FALSE, results="hide"}
+# insert exploratory data analysis code here
+
+
+
+```
+
+
+## Data Visualization
+INSERT NARRATIVE HERE
+```{r warning=FALSE, message=FALSE}
+# insert data visualization code here
+
+
+
+```
+
+## Logistic Regression Results
+INSERT NARRATIVE HERE
+```{r warning=FALSE, message=FALSE, results="hide"}
+# insert logistic regression code
+
+
+```
+
